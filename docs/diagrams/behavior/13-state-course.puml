@@ -1,0 +1,25 @@
+@startuml
+!define PRIMARY_COLOR #2E86AB
+skinparam state {
+  ArrowColor PRIMARY_COLOR
+  BorderColor PRIMARY_COLOR
+  BackgroundColor White
+}
+title États — Course et Notification
+
+state "Course" as CourseState {
+  [*] --> pending
+  pending --> accepted : chauffeur assigné
+  accepted --> in_progress : départ confirmé
+  in_progress --> done : arrivée
+  pending --> canceled : annulation passager
+  accepted --> canceled : annulation chauffeur
+}
+
+state "Notification" as NotifState {
+  [*] --> unread
+  unread --> read : marquer comme lu
+  read --> archived : nettoyage
+}
+@enduml
+

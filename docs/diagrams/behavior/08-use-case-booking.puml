@@ -1,0 +1,23 @@
+@startuml
+!define PRIMARY_COLOR #2E86AB
+skinparam usecase {
+  BackgroundColor White
+  BorderColor PRIMARY_COLOR
+}
+title Cas d'utilisation — Réservation
+
+actor Passager
+actor Chauffeur
+usecase "Créer réservation" as UC_Create
+usecase "Estimer prix" as UC_Estimate
+usecase "Accepter course" as UC_Accept
+usecase "Annuler réservation" as UC_Cancel
+
+Passager --> UC_Create
+Passager --> UC_Estimate
+UC_Create .> UC_Estimate : <<include>>
+Chauffeur --> UC_Accept
+Passager --> UC_Cancel
+UC_Create ..> UC_Cancel : <<extend>>
+@enduml
+

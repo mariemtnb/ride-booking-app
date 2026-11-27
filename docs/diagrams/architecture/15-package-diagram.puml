@@ -1,0 +1,30 @@
+@startuml
+!define PRIMARY_COLOR #2E86AB
+skinparam package {
+  BorderColor PRIMARY_COLOR
+  BackgroundColor White
+}
+title Diagramme de packages — Modules
+
+package "auth" {
+  class User
+  class AuthenticatedSessionController
+  class RegisteredUserController
+}
+package "booking" {
+  class Course
+  class PricingService
+  class DispatchService
+}
+package "tracking" {
+  class Position
+}
+package "notification" {
+  class Notification
+  class NotificationController
+}
+
+auth::User --> booking::Course
+booking::Course --> tracking::Position
+booking::DispatchService --> notification::Notification
+@enduml

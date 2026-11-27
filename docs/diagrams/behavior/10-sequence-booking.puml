@@ -1,0 +1,31 @@
+@startuml
+!define PRIMARY_COLOR #2E86AB
+skinparam sequence {
+  ArrowColor PRIMARY_COLOR
+}
+title Séquence — Création d'une réservation
+
+participant "Passager (React)" as Client
+participant "CourseController" as CourseCtl
+participant "PricingService" as Pricing
+participant "DispatchService" as Dispatch
+database "DB" as DB
+participant "Google Maps API" as GMAPS
+
+Client -> CourseCtl: POST /courses (origin,destination)
+CourseCtl -> Pricing: estimate(origin,destination)
+Pricing -> GMAPS: distance+time
+GMAPS --> Pricing: metrics
+Pricing --> CourseCtl: priceEstimate
+CourseCtl -> DB: INSERT courses(status=pending, ...)
+DB --> CourseCtl: OK
+CourseCtl -> Dispatch: dispatch(course)
+Dispatch -> DB: SELECT available drivers
+Dispatch --> CourseCtl: driver assigned | none
+CourseCtl --> Client: 201 Created (+course, driver?)
+
+alt Aucun chauffeur disponible
+CourseCtl --> Client: 202 Accepted (pending assignment)
+end
+@enduml
+

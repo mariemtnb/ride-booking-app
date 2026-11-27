@@ -1,0 +1,40 @@
+@startuml
+!define PRIMARY_COLOR #2E86AB
+!define SECONDARY_COLOR #A23B72
+skinparam class {
+  BackgroundColor White
+  BorderColor PRIMARY_COLOR
+  ArrowColor PRIMARY_COLOR
+}
+title Diagramme de classes — Module Authentification
+
+class User
+class AccessToken <<Sanctum>> {
+  +id: bigint
+  +user_id: bigint
+  +name: string
+  +token: hash
+  +abilities: json
+  +created_at: datetime
+  +last_used_at: datetime
+}
+
+class RegisteredUserController <<Controller>> {
+  +store(request)
+}
+class AuthenticatedSessionController <<Controller>> {
+  +store(request)
+  +destroy(request)
+}
+
+User "1" -- "0..*" AccessToken : émet >
+RegisteredUserController ..> User : crée
+AuthenticatedSessionController ..> User : authentifie
+AuthenticatedSessionController ..> AccessToken : gère
+
+note bottom
+Basé sur Laravel Sanctum (middleware `auth:sanctum`).
+Contrôleurs: voir routes d’API.
+end note
+@enduml
+

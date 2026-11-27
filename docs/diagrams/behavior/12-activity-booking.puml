@@ -1,0 +1,28 @@
+@startuml
+!define PRIMARY_COLOR #2E86AB
+skinparam activity {
+  ArrowColor PRIMARY_COLOR
+  BorderColor PRIMARY_COLOR
+  BackgroundColor White
+}
+title Activité — Parcours de réservation
+
+start
+:Saisie origine/destination;
+:Estimation prix/temps;
+if (Valide ?) then (Oui)
+  :Création de la course (pending);
+  :Dispatch vers chauffeurs disponibles;
+  if (Chauffeur accepte ?) then (Oui)
+    :Course -> accepted;
+    :Début du trajet -> in_progress;
+    :Arrivée -> done;
+  else (Non)
+    :Relancer dispatch / notifier passager;
+  endif
+else (Non)
+  :Corriger informations / abandon;
+endif
+stop
+@enduml
+

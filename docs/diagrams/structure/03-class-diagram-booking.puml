@@ -1,0 +1,33 @@
+@startuml
+!define PRIMARY_COLOR #2E86AB
+!define SUCCESS_COLOR #18A999
+skinparam class {
+  BackgroundColor White
+  BorderColor PRIMARY_COLOR
+  ArrowColor PRIMARY_COLOR
+}
+title Diagramme de classes — Module Réservation/Tracking
+
+class Course
+class DriverProfile
+class Position
+class Notification
+class PricingService <<Service>> {
+  +estimate(origin, destination)
+}
+class DispatchService <<Service>> {
+  +dispatch(course)
+}
+
+Course "1" -- "0..*" Position
+DriverProfile "1" -- "0..*" Course
+Course ..> PricingService : estimation
+Course ..> DispatchService : assignation
+DispatchService ..> Notification : notifie chauffeur
+
+note right of PricingService
+Consulte Google Maps (distance/temps),
+applique la tarification dynamique.
+end note
+@enduml
+

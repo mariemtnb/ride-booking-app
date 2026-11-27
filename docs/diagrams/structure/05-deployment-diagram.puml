@@ -1,0 +1,25 @@
+@startuml
+!define PRIMARY_COLOR #2E86AB
+skinparam node {
+  BackgroundColor White
+  BorderColor PRIMARY_COLOR
+}
+title Diagramme de déploiement
+
+node "Client Browser" as Browser
+node "Frontend Container\nReact App\nPort 3000" as Frontend
+node "Backend Container\nLaravel API\nPort 8000" as Backend
+node "DB Container\nMySQL\nPort 3306\nVolume: /var/lib/mysql" as Database
+cloud "Google Maps" as GMAPS
+
+Browser --> Frontend : HTTPS
+Frontend --> Backend : HTTPS
+Backend --> Database : TCP
+Backend --> GMAPS : HTTPS
+
+note bottom
+Environnements:
+dev (SQLite option), staging, prod (MySQL).
+Conteneurisation via Docker; reverse proxy possible (Nginx).
+end note
+@enduml

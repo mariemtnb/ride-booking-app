@@ -1,0 +1,126 @@
+@startuml
+!define PRIMARY_COLOR #2E86AB
+!define SECONDARY_COLOR #A23B72
+!define SUCCESS_COLOR #18A999
+!define WARNING_COLOR #F18F01
+!define DANGER_COLOR #C73E1D
+
+' Style
+skinparam class {
+  BackgroundColor White
+  BorderColor PRIMARY_COLOR
+  ArrowColor PRIMARY_COLOR
+}
+skinparam stereotypeFontColor SECONDARY_COLOR
+skinparam classAttributeIconSize 0
+
+title Diagramme de classes — Modèle principal
+
+legend left
+Ce diagramme agrège les entités majeures (Eloquent) et leurs relations.
+Les méthodes indiquent les opérations métier usuelles des contrôleurs Laravel.
+Fin de légende
+end legend
+
+class User <<Entity>> {
+  +id: bigint
+  +name: string
+  +email: string
+  +role: enum {passager, chauffeur}
+  +phone_number: string
+  +created_at: datetime
+  +updated_at: datetime
+  --
+  +register(data)
+  +login(credentials)
+  +updateProfile(data)
+}
+
+class DriverProfile <<Entity>> {
+  +id: bigint
+  +user_id: bigint
+  +license_number: string
+  +rating: decimal
+  +status: enum {active, suspended}
+  +created_at: datetime
+  +updated_at: datetime
+  --
+  +acceptCourse(courseId)
+  +updateAvailability(flag)
+}
+
+class Vehicle <<Entity>> {
+  +id: bigint
+  +driver_profile_id: bigint
+  +make: string
+  +model: string
+  +plate_number: string
+  +color: string
+  +created_at: datetime
+  +updated_at: datetime
+}
+
+class Course <<Entity>> {
+  +id: bigint
+  +passenger_id: bigint
+  +driver_profile_id: bigint [0..1]
+  +origin_lat: decimal
+  +origin_lng: decimal
+  +dest_lat: decimal
+  +dest_lng: decimal
+  +estimated_price: decimal
+  +status: enum {pending, accepted, in_progress, done, canceled}
+  +created_at: datetime
+  +updated_at: datetime
+  --
+  +estimatePrice()
+  +dispatch()
+  +start()
+  +complete()
+  +cancel()
+}
+
+class Position <<Entity>> {
+  +id: bigint
+  +driver_profile_id: bigint
+  +course_id: bigint [0..1]
+  +lat: decimal
+  +lng: decimal
+  +timestamp: datetime
+  +created_at: datetime
+  +updated_at: datetime
+}
+
+class Notification <<Entity>> {
+  +id: bigint
+  +user_id: bigint
+  +type: enum {system, booking, security}
+  +priority: enum {low, normal, high, urgent}
+  +message: text
+  +sent_at: datetime
+  +read_at: datetime [0..1]
+  +metadata: json
+  --
+  +markAsRead()
+  +deleteRead()
+}
+
+' Associations
+User "1" -- "0..1" DriverProfile : possède >
+DriverProfile "1" -- "1" Vehicle : utilise >
+User "1" -- "0..*" Course : crée >
+DriverProfile "1" -- "0..*" Course : prend en charge >
+Course "1" -- "0..*" Position : génère >
+User "1" -- "0..*" Notification : reçoit >
+
+note right of Course
+Cycle de vie:
+pending -> accepted -> in_progress -> done
+Transitions pilotées par CourseController
+end note
+
+note bottom of Notification
+Priorités influent la durée d’affichage (client) et le canal.
+end note
+
+@enduml

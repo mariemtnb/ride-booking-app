@@ -1,0 +1,29 @@
+@startuml
+!define PRIMARY_COLOR #2E86AB
+skinparam object {
+  BorderColor PRIMARY_COLOR
+  BackgroundColor White
+}
+title Communication — Création de réservation
+
+object Client
+object CourseController
+object PricingService
+object DispatchService
+object DB
+object GMAPS
+
+Client -> CourseController : POST /courses
+CourseController -> PricingService : estimate()
+PricingService -> GMAPS : distance/temps
+GMAPS --> PricingService : metrics
+PricingService --> CourseController : estimate
+CourseController -> DB : create(course)
+DB --> CourseController : ok
+CourseController -> DispatchService : dispatch(course)
+DispatchService -> DB : query drivers
+DB --> DispatchService : list
+DispatchService --> CourseController : assigned driver
+CourseController --> Client : 201 Created
+@enduml
+

@@ -1,0 +1,44 @@
+@startuml
+!define PRIMARY_COLOR #2E86AB
+!define SECONDARY_COLOR #A23B72
+skinparam component {
+  BackgroundColor White
+  BorderColor PRIMARY_COLOR
+  ArrowColor PRIMARY_COLOR
+}
+title Diagramme de composants
+
+component "Frontend React SPA" as React
+component "Auth UI" as AuthUI
+component "Booking UI" as BookingUI
+component "Notifications" as NotifUI
+component "Dashboard" as DashboardUI
+
+React -down- AuthUI
+React -down- BookingUI
+React -down- NotifUI
+React -down- DashboardUI
+
+component "API Laravel" as API
+component "Controllers" as Ctrls
+component "Services" as Svc
+component "ORM Eloquent" as Orm
+
+API -down- Ctrls
+API -down- Svc
+API -down- Orm
+database "MySQL (prod)\nSQLite (dev)" as DB
+component "Sanctum" as Sanctum
+cloud "Google Maps Platform" as GMAPS
+component "Notification Service\n(in-app)" as Notif
+
+React --> API : Axios / REST
+API --> DB : ORM queries
+API --> Sanctum : auth middleware
+API --> GMAPS : estimation distance/temps
+API --> Notif : envoi/lecture notifications
+
+note bottom of React
+SPA avec React Router, Tailwind, polling pour notifications.
+end note
+@enduml

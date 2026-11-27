@@ -1,0 +1,37 @@
+@startuml
+!define PRIMARY_COLOR #2E86AB
+skinparam rectangle {
+  BorderColor PRIMARY_COLOR
+  BackgroundColor White
+}
+title Architecture logicielle — Couches et MVC
+
+rectangle "Présentation (React)" as Presentation {
+  rectangle "Pages & Composants\nRouter + Axios" as UI
+}
+
+rectangle "Application (Laravel)" as Application {
+  rectangle "Controllers" as Controllers
+  rectangle "Services" as Services
+}
+
+rectangle "Domaine" as Domain {
+  rectangle "Entités (Eloquent)" as Entities
+}
+
+rectangle "Infrastructure" as Infra {
+  rectangle "ORM & Migrations" as ORM
+  rectangle "MySQL/SQLite" as DB
+  rectangle "APIs externes (Google Maps)" as Ext
+  rectangle "Sanctum Auth" as Auth
+}
+
+UI --> Controllers
+Controllers --> Services
+Services --> Entities
+Entities --> ORM
+ORM --> DB
+Services --> Ext
+Controllers --> Auth
+@enduml
+

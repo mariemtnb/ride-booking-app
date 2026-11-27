@@ -1,0 +1,28 @@
+@startuml
+!define PRIMARY_COLOR #2E86AB
+skinparam sequence {
+  ArrowColor PRIMARY_COLOR
+  LifeLineBorderColor PRIMARY_COLOR
+  LifeLineBackgroundColor #FFFFFF
+}
+title Séquence — Inscription d'un nouveau passager
+
+participant "Passager (React)" as Client
+participant "RegisteredUserController\n(Laravel)" as Controller
+participant "User (Eloquent)" as UserModel
+database "DB (MySQL/SQLite)" as DB
+participant "EmailService" as Mail
+
+Client -> Controller: POST /register (form data)
+Controller -> UserModel: validateAndCreate(data)
+UserModel -> DB: INSERT users(...)
+DB --> UserModel: OK (201)
+Controller -> Mail: sendVerificationEmail(user)
+Mail --> Controller: queued
+Controller --> Client: 201 Created + verify notice
+
+alt Erreur validation
+Controller --> Client: 422 Unprocessable Entity
+end
+@enduml
+

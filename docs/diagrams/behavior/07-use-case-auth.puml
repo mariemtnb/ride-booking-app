@@ -1,0 +1,21 @@
+@startuml
+!define PRIMARY_COLOR #2E86AB
+skinparam usecase {
+  BackgroundColor White
+  BorderColor PRIMARY_COLOR
+}
+title Cas d'utilisation — Authentification
+
+actor Passager
+usecase "register" as UC_Register
+usecase "login" as UC_Login
+usecase "logout" as UC_Logout
+usecase "profile (GET/PUT)" as UC_Profile
+usecase "vérifier email" as UC_Verify
+
+Passager --> UC_Register
+Passager --> UC_Login
+Passager --> UC_Logout
+Passager --> UC_Profile
+UC_Register .> UC_Verify : <<include>>
+@enduml

@@ -1,0 +1,29 @@
+@startuml
+!define PRIMARY_COLOR #2E86AB
+skinparam sequence {
+  ArrowColor PRIMARY_COLOR
+}
+title Séquence — Notifications (réception et lecture)
+
+participant "System/Dispatch" as System
+participant "NotificationController" as NotifCtl
+database "DB" as DB
+participant "Passager (React)" as Client
+
+System -> NotifCtl: createNotification(userId, payload)
+NotifCtl -> DB: INSERT notifications(...)
+DB --> NotifCtl: OK
+
+loop Polling (10s)
+Client -> NotifCtl: GET /notifications?unread=true
+NotifCtl -> DB: SELECT unread notifications
+DB --> NotifCtl: list
+NotifCtl --> Client: 200 OK (list)
+end
+
+Client -> NotifCtl: PUT /notifications/{id}/read
+NotifCtl -> DB: UPDATE read_at=now()
+DB --> NotifCtl: OK
+NotifCtl --> Client: 200 OK
+@enduml
+
